@@ -13,11 +13,11 @@ const cardArray = [
   },
   {
     name: "lollipop",
-    img: "images/lollipop",
+    img: "images/lollipop.png",
   },
   {
     name: "sandwich",
-    img: "images/sandwich",
+    img: "images/sandwich.png",
   },
   {
     name: "watermelon",
@@ -39,14 +39,7 @@ const cardArray = [
     name: "apple",
     img: "images/apple_green.png",
   },
-  {
-    name: "guess",
-    img: "images/question.png",
-  },
-  {
-    name: "check",
-    img: "images/check.png",
-  },
+
   {
     name: "popcorn",
     img: "/images/popcorn.png",
@@ -61,11 +54,11 @@ const cardArray = [
   },
   {
     name: "lollipop",
-    img: "images/lollipop",
+    img: "images/lollipop.png",
   },
   {
     name: "sandwich",
-    img: "images/sandwich",
+    img: "images/sandwich.png",
   },
   {
     name: "watermelon",
@@ -87,21 +80,29 @@ const cardArray = [
     name: "apple",
     img: "images/apple_green.png",
   },
-  {
-    name: "guess",
-    img: "images/question.png",
-  },
-  {
-    name: "check",
-    img: "images/check.png",
-  },
 ];
-
+//   {
+//     name: "guess",
+//     img: "images/question.png",
+//   },
+//   {
+//     name: "check",
+//     img: "images/check.png",
+//   },  {
+//     name: "guess",
+//     img: "images/question.png",
+//   },
+//   {
+//     name: "check",
+//     img: "images/check.png",
+//   },
 cardArray.sort(() => 0.5 - Math.random());
-console.log(cardArray);
 
 const gridDisplay = document.getElementById("grid");
-const cardChosen = [];
+const resultDisplay = document.querySelector("#result");
+let cardChosen = [];
+let cardsChosenIds = [];
+const cardsWon = [];
 
 function createBoard() {
   for (i = 0; i < cardArray.length; i++) {
@@ -115,9 +116,39 @@ function createBoard() {
 }
 createBoard();
 
+function checkMatch() {
+  const optionOneId = cardsChosenIds[0];
+  const optionTwoId = cardsChosenIds[1];
+  const cards = document.querySelectorAll("img");
+  console.log(cards);
+  console.log("Check for match");
+  if (optionOneId == optionTwoId) {
+    cards[optionOneId].setAttribute("src", "images/question.png");
+    alert("You have clicked the same image");
+  } else if (cardChosen[0] == cardChosen[1]) {
+    cards[optionOneId].setAttribute("src", "images/check.png");
+    cards[optionTwoId].setAttribute("src", "images/check.png");
+    cards[optionOneId].removeEventListener("click", flipCard);
+    cards[optionTwoId].removeEventListener("click", flipCard);
+    cardsWon.push(cardChosen);
+  } else {
+    cards[optionOneId].setAttribute("src", "images/question.png");
+    cards[optionTwoId].setAttribute("src", "images/question.png");
+  }
+  cardChosen = [];
+  cardsChosenIds = [];
+  resultDisplay.textContent = cardsWon.length;
+  if (cardsWon.length == cardArray.length / 2) {
+    resultDisplay.textContent = "Congratulations you found them all!";
+  }
+}
+
 function flipCard() {
   const cardId = this.getAttribute("data-id");
   cardChosen.push(cardArray[cardId].name);
-  console.log("clicked", cardId, cardArray[cardId].name);
-  console.log(cardChosen);
+  cardsChosenIds.push(cardId);
+  this.setAttribute("src", cardArray[cardId].img);
+  if (cardChosen.length === 2) {
+    setTimeout(checkMatch, 500);
+  }
 }
